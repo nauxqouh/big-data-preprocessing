@@ -9,13 +9,13 @@ cd lesson2
 
 Then, following all below to setup system in your machine.
 
-### 1. Build image from Dockerfile
+#### 1. Build image from Dockerfile
 
 ```bash
 docker compose build
 ```
 
-### 2. Run all container
+#### 2. Run all container
 
 ```bash
 docker compose up -d
@@ -26,7 +26,7 @@ You can check container status
 docker ps
 ```
 
-### 3. Access into container if you want to test inside
+#### 3. Access into container if you want to test inside
 
 Example: You want to get into `namenode` to test Hadoop
 
@@ -34,11 +34,13 @@ Example: You want to get into `namenode` to test Hadoop
 docker exec -it <container_id> bash
 ```
 
-### Additional: Stop docker
+#### Additional: Stop docker
 
 ```bash
 docker compose down
 ```
+
+### Note
 
 You can use `mysqlsampledatabase.sql` file in this directory to testing your system. 
 
