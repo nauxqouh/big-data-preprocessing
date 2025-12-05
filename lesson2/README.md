@@ -1,46 +1,84 @@
-# Setup mini Hadoop and Sqoop system in your machine
+# Setup mini Hadoop and Sqoop System on Your Machine
 
-Getting Started:
+## Getting Started:
 
 ```bash
 git clone https://github.com/nauxqouh/big-data-preprocessing.git
 cd lesson2
 ```
 
-Then, following all below to setup system in your machine.
+Follow the steps below to set up the entire system.
 
-#### 1. Build image from Dockerfile
-
-```bash
-docker compose build
-```
-
-#### 2. Run all container
+### 1. Build Images and Start All Containers
 
 ```bash
 docker compose up -d
 ```
 
-You can check container status
+Check container status:
 ```bash
 docker ps
 ```
 
-#### 3. Access into container if you want to test inside
+If all containers are running, your environment is ready.
 
-Example: You want to get into `namenode` to test Hadoop
+### 2. Verify Your Hadoop + Sqoop Environment (Testing Guide)
 
+This section helps you confirm that each component (Hadoop, MariaDB, Sqoop, phpMyAdmin) is working correctly.
+
+#### 2.1. Test 1: Hadoop HDFS
+
+Enter the `namenode` container:
 ```bash
-docker exec -it <container_id> bash
+docker exec -it lesson2-namenode-1 bash
 ```
 
-#### Additional: Stop docker
-
+Check Hadoop storage status:
 ```bash
-docker compose down
+hdfs dfsadmin -report
 ```
 
-### Note
+- Expected output (sample):
+    ```bash
+    hdfs-namenode:/# hdfs dfsadmin -report
+    Configured Capacity: 0 (0 B)
+    Present Capacity: 0 (0 B)
+    DFS Remaining: 0 (0 B)
+    DFS Used: 0 (0 B)
+    DFS Used%: 0.00%
+    Under replicated blocks: 0
+    Blocks with corrupt replicas: 0
+    Missing blocks: 0
+    Missing blocks (with replication factor 1): 0
+    Pending deletion blocks: 0
+
+    -------------------------------------------------
+    ```
+
+#### 2.2. Test 2: Import SQL sample into MariaDB
+
+Import sample data:
+
+```bash
+docker exec -i lesson2-mariadb-1 mariadb -uroot -prootpassword mydb < ./mysqlsampledatabase.sql
+```
+
+Access MariaDB:
+```bash
+docker exec -it lesson2-mariadb-1 mariadb -uroot -prootpassword
+```
+
+Inside MariaDB:
+```bash
+SHOW DATABASES;
+USE mydb;
+SHOW TABLES;
+SELECT * FROM customers LIMIT 5;
+```
+
+If tables and data appear, MariaDB is working.
+
+**Note:**
 
 You can use `mysqlsampledatabase.sql` file in this directory to testing your system. 
 
@@ -49,4 +87,52 @@ You can use `mysqlsampledatabase.sql` file in this directory to testing your sys
 docker exec -i lesson2-mariadb-1 mariadb -uroot -prootpassword mydb < ./mysqlsampledatabase.sql
 ```
 
-Replace `lesson2-mariadb-1` with your container name and `./mysqlsampledatabase.sql` with your sql file path. Using your own password in `.env` for `-prootpassword` and `mydb`.
+*Replace `lesson2-mariadb-1` with your container name and `./mysqlsampledatabase.sql` with your sql file path. Using your own password in `.env` for `-prootpassword` and `mydb`.*
+
+#### 2.3. Test 3 — Access phpMyAdmin
+
+Open browser 👉 http://localhost:8080
+
+Log in with:
+
+- Username: `root`
+- Password: in your `.env` ~ `MYSQL_ROOT_PASSWORD=<your_password>`
+
+If you can see the databases, phpMyAdmin is working.
+
+#### 2.4. Test 4 — Test connection between Sqoop and MariaDB
+
+Enter Sqoop container:
+```bash
+docker exec -it lesson2-sqoop-1 bash
+```
+
+Run:
+```bash
+sqoop list-databases \
+  --connect jdbc:mysql://mariadb:3306 \
+  --username root \
+  --password rootpassword
+```
+
+Right results return a list of database. Sqoop is correctly connected to MariaDB.
+
+### 3. Finished
+
+If you reach this point, congratulations 🎉!
+
+You have successfully set up a mini Big Data system including:
+
+- Hadoop (NameNode, DataNode, Secondary NameNode)
+- MariaDB
+- Sqoop
+- phpMyAdmin
+
+Note: *Sqoop import/export workflows will be explored in the next lesson.*
+
+## Stop All Containers
+
+```bash
+docker compose down
+```
+
