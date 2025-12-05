@@ -18,7 +18,8 @@ ENV HADOOP_HDFS_HOME=$HADOOP_HOME
 ENV YARN_HOME=$HADOOP_HOME
 ENV HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
 ENV PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
-ENV HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"
+# ENV HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"
+ENV HADOOP_OPTS="-Djava.library.path="
 
 RUN apk add --no-cache wget tar
 RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz && \

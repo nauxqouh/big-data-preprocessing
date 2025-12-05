@@ -49,11 +49,10 @@ hdfs dfsadmin -report
 
 - Expected output (sample):
     ```bash
-    hdfs-namenode:/# hdfs dfsadmin -report
-    Configured Capacity: 0 (0 B)
-    Present Capacity: 0 (0 B)
-    DFS Remaining: 0 (0 B)
-    DFS Used: 0 (0 B)
+    Configured Capacity: 62671097856 (58.37 GB)
+    Present Capacity: 46441230336 (43.25 GB)
+    DFS Remaining: 46441201664 (43.25 GB)
+    DFS Used: 28672 (28 KB)
     DFS Used%: 0.00%
     Under replicated blocks: 0
     Blocks with corrupt replicas: 0
@@ -62,6 +61,25 @@ hdfs dfsadmin -report
     Pending deletion blocks: 0
 
     -------------------------------------------------
+    Live datanodes (1):
+
+    Name: 172.18.0.6:50010 (lesson2-datanode-1.lesson2_default)
+    Hostname: datanode
+    Decommission Status : Normal
+    Configured Capacity: 62671097856 (58.37 GB)
+    DFS Used: 28672 (28 KB)
+    Non DFS Used: 13013151744 (12.12 GB)
+    DFS Remaining: 46441201664 (43.25 GB)
+    DFS Used%: 0.00%
+    DFS Remaining%: 74.10%
+    Configured Cache Capacity: 0 (0 B)
+    Cache Used: 0 (0 B)
+    Cache Remaining: 0 (0 B)
+    Cache Used%: 100.00%
+    Cache Remaining%: 0.00%
+    Xceivers: 1
+    Last contact: Fri Dec 05 11:32:49 GMT 2025
+    Last Block Report: Fri Dec 05 11:06:58 GMT 2025
     ```
 
 #### 2.2. Test 2: Import SQL sample into MariaDB
@@ -80,7 +98,7 @@ docker exec -it lesson2-mariadb-1 mariadb -uroot -prootpassword
 Inside MariaDB:
 ```bash
 SHOW DATABASES;
-USE mydb;
+USE classicmodels;
 SHOW TABLES;
 SELECT * FROM customers LIMIT 5;
 ```
