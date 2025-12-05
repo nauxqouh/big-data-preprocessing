@@ -1,4 +1,4 @@
-# Setup mini Hadoop and Sqoop System on Your Machine
+# ⚙️ Setup mini Hadoop and Sqoop System on Your Machine
 
 ## Getting Started:
 
@@ -11,6 +11,15 @@ Follow the steps below to set up the entire system.
 
 ### 1. Build Images and Start All Containers
 
+First of all, you need to create your own `.env` file, include:
+```bash
+MYSQL_ROOT_PASSWORD=<your_password>
+MYSQL_DATABASE=<your_db_name>
+MYSQL_USER=<your_username>
+MYSQL_PASSWORD=<your_password>
+```
+
+Start building!
 ```bash
 docker compose up -d
 ```
