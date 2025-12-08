@@ -96,10 +96,7 @@ sqoop import \
 -m 1
 ```
 
-*Note: Sqoop import always requires `target-dir` to be a new directory. Remove the old folder if you get an error*
-```diff 
-ERROR tool.ImportTool: Import failed: org.apache.hadoop.mapred.FileAlreadyExistsException: Output directory hdfs://hdfs-namenode:9000/user/root/newdata already exists
-```
+*Note: Sqoop import always requires `target-dir` to be a new directory. Remove the old folder if you get an error `ERROR tool.ImportTool: Import failed: org.apache.hadoop.mapred.FileAlreadyExistsException: Output directory hdfs://hdfs-namenode:9000/user/root/newdata already exists`.*
 
 ```bash
 hdfs dfs -rm -r /user/root/newdata
@@ -126,33 +123,35 @@ Relying on a "full refresh" (re-importing an entire massive table) just to add n
 A much better practice is an "incremental load", which intelligently fetches only the new or updated records (the "delta"). This approach is faster, cheaper, and puts less strain on the database, allowing for much fresher, near-real-time data.
 
 - **Append Mode**: Used when new rows are added to the source table, and rows are identified by an auto-incrementing key.
-```bash
-sqoop import \
---connect jdbc:mysql://mariadb:3306/classicmodels \
---username root \
---password rootpassword \
---table employees \
---target-dir /user/root/newdata/ \
---incremental append \
---check-column employeeNumber \
---last-value 1702 \
--m 1
-```
+
+    ```bash
+    sqoop import \
+    --connect jdbc:mysql://mariadb:3306/classicmodels \
+    --username root \
+    --password rootpassword \
+    --table employees \
+    --target-dir /user/root/newdata/ \
+    --incremental append \
+    --check-column employeeNumber \
+    --last-value 1702 \
+    -m 1
+    ```
 
 - **Last Modified Mode**: Used when existing rows can be updated, based on a timestamp column.
-```bash
-sqoop import \
---connect jdbc:mysql://mariadb:3306/classicmodels \
---username root \
---password rootpassword \
---table orders \
---target-dir /user/root/newdata/ \
---incremental lastmodified \
---check-column shippedDate \
---last-value "2005-05-27" \
---merge-key orderNumber \
--m 1
-```
+
+    ```bash
+    sqoop import \
+    --connect jdbc:mysql://mariadb:3306/classicmodels \
+    --username root \
+    --password rootpassword \
+    --table orders \
+    --target-dir /user/root/newdata/ \
+    --incremental lastmodified \
+    --check-column shippedDate \
+    --last-value "2005-05-27" \
+    --merge-key orderNumber \
+    -m 1
+    ```
 
 ## Exercise
 
@@ -167,7 +166,7 @@ Using Sqoop to solve:
 - Import film table into another folder but only has film released in 2008 or later.
 - Add some record to film table, update all table has changed into HDFS
 
-## Results
+## Solutions
 
 This section summarizes the results after completing the exercises.
 
@@ -178,7 +177,7 @@ docker exec -i lesson2-mariadb-1 mariadb -uroot -prootpassword sakila < ./sakila
 docker exec -i lesson2-mariadb-1 mariadb -uroot -prootpassword sakila < ./sakila-data.sql
 ```
 
-#### Exercise 1: Import all data into HDFS.
+### Exercise 1: Import all data into HDFS.
 
 - All tables from Sakila database were successfully imported into HDFS through:
 
@@ -252,7 +251,7 @@ docker exec -i lesson2-mariadb-1 mariadb -uroot -prootpassword sakila < ./sakila
     drwxr-xr-x   - root supergroup          0 2025-12-08 02:47 /user/hadoop/sakila/store
     ```
 
-#### Exercise 2: Import film table into another folder but only has film released in 2008 or later.
+### Exercise 2: Import film table into another folder but only has film released in 2008 or later.
 
 ```bash
 sqoop eval \
@@ -283,7 +282,7 @@ Resulting directory:
 
 - Contains only films released 2006 and later.
 
-#### Exercise 3: Add some record to film table, update all table has changed into HDFS
+### Exercise 3: Add some record to film table, update all table has changed into HDFS
 
 Create some example records:
 ```sql
