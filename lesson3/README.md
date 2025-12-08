@@ -96,7 +96,10 @@ sqoop import \
 -m 1
 ```
 
-*Note: Sqoop import always requires `target-dir` to be a new directory. Remove the old folder if you get an error `ERROR tool.ImportTool: Import failed: org.apache.hadoop.mapred.FileAlreadyExistsException: Output directory hdfs://hdfs-namenode:9000/user/root/newdata already exists`*
+*Note: Sqoop import always requires `target-dir` to be a new directory. Remove the old folder if you get an error*
+```diff 
+ERROR tool.ImportTool: Import failed: org.apache.hadoop.mapred.FileAlreadyExistsException: Output directory hdfs://hdfs-namenode:9000/user/root/newdata already exists
+```
 
 ```bash
 hdfs dfs -rm -r /user/root/newdata
@@ -175,7 +178,7 @@ docker exec -i lesson2-mariadb-1 mariadb -uroot -prootpassword sakila < ./sakila
 docker exec -i lesson2-mariadb-1 mariadb -uroot -prootpassword sakila < ./sakila-data.sql
 ```
 
-### Import all data into HDFS.
+#### Exercise 1: Import all data into HDFS.
 
 - All tables from Sakila database were successfully imported into HDFS through:
 
@@ -249,7 +252,7 @@ docker exec -i lesson2-mariadb-1 mariadb -uroot -prootpassword sakila < ./sakila
     drwxr-xr-x   - root supergroup          0 2025-12-08 02:47 /user/hadoop/sakila/store
     ```
 
-### Import film table into another folder but only has film released in 2008 or later.
+#### Exercise 2: Import film table into another folder but only has film released in 2008 or later.
 
 ```bash
 sqoop eval \
@@ -280,7 +283,7 @@ Resulting directory:
 
 - Contains only films released 2006 and later.
 
-### Add some record to film table, update all table has changed into HDFS
+#### Exercise 3: Add some record to film table, update all table has changed into HDFS
 
 Create some example records:
 ```sql
