@@ -1,4 +1,4 @@
-# ⚙️ Setup mini Hadoop and Sqoop System on Your Machine
+# ⚙️ Setup Mini Hadoop and Sqoop System on Your Machine
 
 ## Getting Started:
 
