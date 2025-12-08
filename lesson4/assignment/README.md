@@ -1,6 +1,6 @@
 # My Assignment
 
-## Requirements:
+## Requirements
 
 ### Part 1. Basic operations with PySpark
 
@@ -10,8 +10,8 @@ Using [customers-100.csv](../customers-100.csv), and [customers-1000.csv](../cus
 
 Using sakila database (download [sakila database](https://dev.mysql.com/doc/index-other.html)) or provided sql file in this lesson 3 folder
 
-- [sakila-schema.sql](../lesson3/sakila-schema.sql)
-- [sakila-data.sql](../lesson3/sakila-data.sql)
+- [sakila-schema.sql](lesson3/sakila-schema.sql)
+- [sakila-data.sql](lesson3/sakila-data.sql)
 
 Using PySpark to solve:
 
@@ -24,7 +24,7 @@ Using PySpark to solve:
 ### Folder Structure
 
 ```bash
-big-data-processing-experiment/
+assignment/
 ├── README.md                        # Assignment overview & instructions
 ├── PySpark_CSVExperiment.ipynb      # Jupyter Notebook for Part 1
 ├── PySpark_HDFS.ipynb               # Jupyter Notebook for Part 2
@@ -35,10 +35,23 @@ big-data-processing-experiment/
 
 ### Instructions
 
-1. Make sure `Python 3.13+`, `Java 17` and `PySpark` are installed.
+1. Ensure `Python 3.13+`, `Java 17`, and `PySpark` are installed.
+2. For Part 1:
+- Open `PySpark_CSVExperiment.ipynb`.
+- Import CSV files, explore the schema, and perform basic transformations.
+- Combined outputs will be saved in `output/customers_combined/`.
+3. For Part 2:
+- Set up `sakila` database like lesson 3.
+- Open `PySpark_HDFS.ipynb`.
+- Load all tables from `sakila` into HDFS.
+- Filter film table for films released in 2008 or later and save into a separate HDFS folder.
+- Add example records to film table and perform incremental updates.
+- Outputs and logs will be saved in `output/part2/`.
+4. To check incremental load, verify the last value used and ensure new rows are appended or merged correctly.
 
-2. Run `PySpark_CSVExperiment.ipynb` to explore basic operations in PySpark.
+### Notes
 
-3. Run `PySpark_HDFS.ipynb` for 
-
-4. Outputs will be saved into the `output/` folder.
+- Use Spark's DataFrame API for loading, filtering, and writing data.
+- Each table should have its own output folder in HDFS (similar to `sqoop import-all-tables`).
+- Remember to stop the Spark session after completing each notebook.
+- For reproducibility, all outputs are stored in the `output/` folder.
