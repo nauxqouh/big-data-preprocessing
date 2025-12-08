@@ -26,12 +26,12 @@ sqoop import \
 ```
 
 👉 Actually, it works the same way as in SQL:
-```bash
+```sql
 SELECT * FROM orders WHERE shippedDate > '2003-04-03';
 ```
 
 Log:
-```bash
+```text
 Transferred 21.3711 KB in 61.38 seconds (356.5189 bytes/sec)
 Retrieved 297 records.
 HDFS: Bytes Written=21884
@@ -168,7 +168,7 @@ Using Sqoop to solve:
 
 This section summarizes the results after completing the exercises.
 
-### Import *.sql file into database in Docker
+First, importing `.sql` file into database in Docker
 
 ```bash
 docker exec -i lesson2-mariadb-1 mariadb -uroot -prootpassword sakila < ./sakila-schema.sql
@@ -220,12 +220,8 @@ sqoop import-all-tables \
 
 - You can check it:
 ```bash
-hdfs-namenode:/# hdfs dfs -ls /user/hadoop/sakila
-```
+$ hdfs-namenode:/# hdfs dfs -ls /user/hadoop/sakila
 
-Output:
-
-```bash
 Found 23 items
 drwxr-xr-x   - root supergroup          0 2025-12-08 02:54 /user/hadoop/sakila/actor
 drwxr-xr-x   - root supergroup          0 2025-12-08 02:56 /user/hadoop/sakila/actor_info
@@ -289,11 +285,7 @@ Resulting directory:
 Create some example records:
 ```sql
 INSERT INTO film (
-    film_id, title, description, release_year,
-    language_id, original_language_id,
-    rental_duration, rental_rate, length,
-    replacement_cost, rating, special_features,
-    last_update
+    film_id, title, description, release_year, language_id, original_language_id, rental_duration, rental_rate, length, replacement_cost, rating, special_features,last_update
 ) VALUES
 (1001, 'AI REVOLUTION', 'A future ruled by AI', 2024, 1, NULL, 6, 2.99, 120, 19.99, 'PG', 'Trailers', '2025-01-01 10:00:00'),
 (1002, 'DATA WARRIORS', 'Hackers fight for truth', 2024, 1, NULL, 5, 1.99, 95, 14.99, 'PG-13', 'Trailers', '2025-01-02 11:00:00'),
