@@ -179,77 +179,77 @@ docker exec -i lesson2-mariadb-1 mariadb -uroot -prootpassword sakila < ./sakila
 
 - All tables from Sakila database were successfully imported into HDFS through:
 
-```bash
-sqoop import-all-tables \
---connect jdbc:mysql://mariadb:3306/sakila \
---username root \
---password rootpassword \
---warehouse-dir /user/hadoop/sakila \
--m 1
-```
+    ```bash
+    sqoop import-all-tables \
+    --connect jdbc:mysql://mariadb:3306/sakila \
+    --username root \
+    --password rootpassword \
+    --warehouse-dir /user/hadoop/sakila \
+    -m 1
+    ```
 
 - Directory structure:
 
-```bash
-/user/hadoop/sakila/
-    ├── actor
-    ├── actor_info
-    ├── address
-    ├── category
-    ├── city
-    ├── country
-    ├── customer
-    ├── customer_list
-    ├── film
-    ├── film_actor
-    ├── film_category
-    ├── film_list
-    ├── film_text
-    ├── inventory
-    ├── language
-    ├── nicer_but_slower_film_list
-    ├── payment
-    ├── rental
-    ├── sales_by_film_category
-    ├── sales_by_store
-    ├── staff
-    ├── staff_list
-    └── store
-```
+    ```text
+    /user/hadoop/sakila/
+        ├── actor
+        ├── actor_info
+        ├── address
+        ├── category
+        ├── city
+        ├── country
+        ├── customer
+        ├── customer_list
+        ├── film
+        ├── film_actor
+        ├── film_category
+        ├── film_list
+        ├── film_text
+        ├── inventory
+        ├── language
+        ├── nicer_but_slower_film_list
+        ├── payment
+        ├── rental
+        ├── sales_by_film_category
+        ├── sales_by_store
+        ├── staff
+        ├── staff_list
+        └── store
+    ```
+
     Each table was stored in its own folder under `sakila`.
 
 - You can check it:
-```bash
-$ hdfs-namenode:/# hdfs dfs -ls /user/hadoop/sakila
+    ```bash
+    $ hdfs-namenode:/# hdfs dfs -ls /user/hadoop/sakila
 
-Found 23 items
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:54 /user/hadoop/sakila/actor
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:56 /user/hadoop/sakila/actor_info
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:58 /user/hadoop/sakila/address
-drwxr-xr-x   - root supergroup          0 2025-12-08 03:00 /user/hadoop/sakila/category
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:59 /user/hadoop/sakila/city
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:59 /user/hadoop/sakila/country
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:49 /user/hadoop/sakila/customer
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:50 /user/hadoop/sakila/customer_list
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:48 /user/hadoop/sakila/film
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:51 /user/hadoop/sakila/film_actor
-drwxr-xr-x   - root supergroup          0 2025-12-08 03:01 /user/hadoop/sakila/film_category
-drwxr-xr-x   - root supergroup          0 2025-12-08 03:01 /user/hadoop/sakila/film_list
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:52 /user/hadoop/sakila/film_text
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:53 /user/hadoop/sakila/inventory
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:56 /user/hadoop/sakila/language
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:54 /user/hadoop/sakila/nicer_but_slower_film_list
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:47 /user/hadoop/sakila/payment
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:58 /user/hadoop/sakila/rental
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:55 /user/hadoop/sakila/sales_by_film_category
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:52 /user/hadoop/sakila/sales_by_store
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:57 /user/hadoop/sakila/staff
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:49 /user/hadoop/sakila/staff_list
-drwxr-xr-x   - root supergroup          0 2025-12-08 02:47 /user/hadoop/sakila/store
-```
+    Found 23 items
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:54 /user/hadoop/sakila/actor
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:56 /user/hadoop/sakila/actor_info
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:58 /user/hadoop/sakila/address
+    drwxr-xr-x   - root supergroup          0 2025-12-08 03:00 /user/hadoop/sakila/category
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:59 /user/hadoop/sakila/city
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:59 /user/hadoop/sakila/country
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:49 /user/hadoop/sakila/customer
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:50 /user/hadoop/sakila/customer_list
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:48 /user/hadoop/sakila/film
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:51 /user/hadoop/sakila/film_actor
+    drwxr-xr-x   - root supergroup          0 2025-12-08 03:01 /user/hadoop/sakila/film_category
+    drwxr-xr-x   - root supergroup          0 2025-12-08 03:01 /user/hadoop/sakila/film_list
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:52 /user/hadoop/sakila/film_text
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:53 /user/hadoop/sakila/inventory
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:56 /user/hadoop/sakila/language
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:54 /user/hadoop/sakila/nicer_but_slower_film_list
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:47 /user/hadoop/sakila/payment
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:58 /user/hadoop/sakila/rental
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:55 /user/hadoop/sakila/sales_by_film_category
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:52 /user/hadoop/sakila/sales_by_store
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:57 /user/hadoop/sakila/staff
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:49 /user/hadoop/sakila/staff_list
+    drwxr-xr-x   - root supergroup          0 2025-12-08 02:47 /user/hadoop/sakila/store
+    ```
 
 ### Import film table into another folder but only has film released in 2008 or later.
-
 
 ```bash
 sqoop eval \
