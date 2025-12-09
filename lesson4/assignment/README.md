@@ -36,11 +36,11 @@ assignment/
 ### Instructions
 
 1. Ensure `Python 3.13+`, `Java 17`, and `PySpark` are installed.
-2. For Part 1:
+2. **For Part 1:**
 - Open `PySpark_CSVExperiment.ipynb`.
 - Import CSV files, explore the schema, and perform basic transformations.
 - Combined outputs will be saved in `output/customers_combined/`.
-3. For Part 2:
+3. **For Part 2:**
 - Set up `sakila` database like lesson 3.
 - Open `PySpark_HDFS.ipynb`.
 - Load all tables from `sakila` into HDFS.
