@@ -1,57 +1,64 @@
 # My Assignment
 
+The exercises include working with CSV files, performing DataFrame operations, loading the Sakila relational database into Spark, modifying records, and exporting the final results.
+
 ## Requirements
 
 ### Part 1. Basic operations with PySpark
 
-Using [customers-100.csv](../customers-100.csv), and [customers-1000.csv](../customers-1000.csv) practice importing CSV files into PySpark, exploring the schema, and performing basic transformations.
+Using the provided CSV files:
 
-### Part 2. Redo lesson 3 exercise with PySpark
+- [customers-100.csv](../customers-100.csv)
+- [customers-1000.csv](../customers-1000.csv)
+
+You will:
+
+1. Import CSV files into PySpark.
+2. Explore and print schema.
+3. Perform basic transformations.
+4. Save the output as a combined dataset.
+
+### Part 2. Redo lesson 3 exercise in memory with PySpark
 
 Using sakila database (download [sakila database](https://dev.mysql.com/doc/index-other.html)) or provided sql file in this lesson 3 folder
 
-- [sakila-schema.sql](lesson3/sakila-schema.sql)
-- [sakila-data.sql](lesson3/sakila-data.sql)
+- [sakila-schema.sql](../../lesson3/sakila-schema.sql)
+- [sakila-data.sql](../../lesson3/sakila-data.sql)
 
 Using PySpark to solve:
 
-- Import all data into HDFS.
-- Import film table into another folder but only has film released in 2008 or later.
-- Add some record to film table, update all table has changed into HDFS.
+1. Load all tables from Maria Database into PySpark DataFrames.
+2. Filter films released in 2008 or later.
+3. Add new film records (in memory).
+4. Save outputs to Parquet for further processing.
 
-## Solutions
-
-### Folder Structure
+## Folder Structure
 
 ```bash
 assignment/
-├── README.md                        # Assignment overview & instructions
+├── README.md                        # Assignment documentation
 ├── PySpark_CSVExperiment.ipynb      # Jupyter Notebook for Part 1
 ├── PySpark_HDFS.ipynb               # Jupyter Notebook for Part 2
+├── lib/                             
+│   └── mysql-connector-j-8.3.xx.jar # JDBC driver
 └── output/
-    ├── customers_combined/          # Output of Part 1 (combined CSV)
-    └── part2/                       # Output of Part 2 (joined/cleaned data, HDFS copy, etc.)
+    ├── part1/                       # Output from Part 1
+    └── part2/                       # Output from Part 2
 ```
 
-### Instructions
+## Environment & Dependencies
 
-1. Ensure `Python 3.13+`, `Java 17`, and `PySpark` are installed.
-2. **For Part 1:**
-- Open `PySpark_CSVExperiment.ipynb`.
-- Import CSV files, explore the schema, and perform basic transformations.
-- Combined outputs will be saved in `output/customers_combined/`.
-3. **For Part 2:**
-- Set up `sakila` database like lesson 3.
-- Open `PySpark_HDFS.ipynb`.
-- Load all tables from `sakila` into HDFS.
-- Filter film table for films released in 2008 or later and save into a separate HDFS folder.
-- Add example records to film table and perform incremental updates.
-- Outputs and logs will be saved in `output/part2/`.
-4. To check incremental load, verify the last value used and ensure new rows are appended or merged correctly.
+To run the notebooks, ensure the following environment:
+- `Python 3.13+`
+- `Java 17`
+- `Apache Spark 3.5.x`
+- `PySpark 3.5.x`
+- `MySQL 8.x`
+- JDBC Driver: `mysql-connector-j-8.3.x.jar`.
 
-### Notes
+## Results
 
-- Use Spark's DataFrame API for loading, filtering, and writing data.
-- Each table should have its own output folder in HDFS (similar to `sqoop import-all-tables`).
-- Remember to stop the Spark session after completing each notebook.
-- For reproducibility, all outputs are stored in the `output/` folder.
+All results are fully documented in each notebook.
+
+Please open the notebooks (`.ipynb` files) to review the outputs.
+
