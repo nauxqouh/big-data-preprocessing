@@ -6,11 +6,11 @@ This repo contains pratical codes, exercises, examples, and notes for Big Data P
 
 ```bash
 big-data-preprocessing/
-├── lesson1/   # Step-by-step Setup of a Basic Hadoop Environment
+├── lesson1/   # Step-by-Step Setup of a Basic Hadoop Environment
 ├── lesson2/   # Setting up Mini Hadoop and Sqoop System using Docker Alpine
 ├── lesson3/   # Advanced Import Techniques in Sqoop
-├── lesson4/   # Installing and configuring PySpark locally
-└── 
+├── lesson4/   # Installing Spark and Processing CSV & SQL Data with PySpark
+└── ...
 ```
 
 ## 📌 Status 
