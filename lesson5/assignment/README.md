@@ -178,7 +178,7 @@ In this step, I build predictive models to identify patients at risk of heart di
 - Categorical features are one-hot encoded using `OneHotEncoder`.
 - The preprocessing steps are combined with each classifier in a `Pipeline` to ensure consistent treatment of the data during training and evaluation.
 
-**Model evaluation:** I compare models using key metrics such as Accuracy, Precision, Recall, F1-score, and ROC-AUC on the test set.
+**Model Comparison:** I compare models using key metrics such as Accuracy, Precision, Recall, F1-score, and ROC-AUC on the test set.
 
 ```text
 \n=== Training ===
@@ -194,6 +194,8 @@ Although Random Forest achieves slightly higher ROC-AUC on the test set, I selec
 1. Logistic Regression provides coefficients for each feature, which allows us to understand how each variable affects heart disease risk.
 2. Logistic Regression is faster to train and easier to deploy.
 3. Logistic Regression achieves a high ROC-AUC (0.985), close to Random Forest, making it a practical choice for explanation and deployment in clinical contexts.
+
+**Hyperparameter Tuning:**
 
 I perform GridSearchCV with Stratified K-Fold cross-validation on Logistic Regression to optimize parameters based on ROC-AUC score. This ensures the model is robust and avoids overfitting.
 
@@ -226,6 +228,8 @@ Execution time: 1.515 minutes
  [ 7 93]]
 ```
 The final algorithm, optimized through the use of GridSearchCV, was evaluated on the test data and shown to have an area under the receiver operating characteristic curve (ROC_AUC) of 95.99%.
+
+**Important features:**
 
 ```text
 \n=== Best estimator important feature ===
