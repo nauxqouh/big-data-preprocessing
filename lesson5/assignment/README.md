@@ -133,8 +133,8 @@ Some health care professionals diagnose patients with high blood pressure if the
 
 From the table above, we can conclude that:
 
-- Hypertension patients have a heart disease rate of 64%.
-- Patients without hypertension have a 50% heart disease rate.
+- Hypertension patients have a heart disease rate of 50%.
+- Patients without hypertension have a 64% heart disease rate.
 
 It appears that patients diagnosed with hypertension have a higher positive heart disease rate than those without hypertension.
 
