@@ -3,8 +3,17 @@ from pyspark.sql.functions import col, sum as _sum, avg, count, round as _round,
 from pyspark.sql.window import Window
 from pyspark.sql.types import StructType, StructField, IntegerType, DoubleType
 from scipy.stats import chi2_contingency
-
-
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.pipeline import make_pipeline, Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold, KFold, GridSearchCV
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, \
+    roc_auc_score, confusion_matrix
+import pandas as pd
+import time
 
 # Spark Session
 spark = SparkSession.builder \
@@ -115,8 +124,16 @@ pivot_table.show(truncate=False)
 print("\\n=== THE MOST COMMON CHEST PAIN TYPE BY AGE GROUP ===")
 most_common_cp = chest_pain_age_group.filter(col("rank") == 1) \
     .select("age_group", "angina") \
-    .withColumnRenamed("angina", "most_common_angina")
+    .withColumnRenamed("angina", "most_common_chest_pain")
 most_common_cp.show(truncate=False)
+
+# Save results
+print("\\nSaving results to output directory...")
+most_common_cp.coalesce(1).write \
+    .mode("overwrite") \
+    .option("header", "true") \
+    .csv("/opt/spark-data/output/most_common_chest_pain_by_age_group")
+print("\\nAnalysis complete! Check spark-data/output/ directory for results.")
 
 # 2. Explore the effect of diabetes on heart disease.
 print("\\n=== Explore the effect of diabetes on heart disease ===")
@@ -224,6 +241,104 @@ else:
     print(">> Fail to reject null hypothesis.\nConclusion: With p_value = 0.05, the data is not reliable and the association between hypertension and heart disease rate is not significant.")
 
 # 4. Build a machine learning model for heart disease prediction.
+print("\\n=== Build a machine learning model for heart disease prediction ===")
+heart_pd = heart_df.toPandas()
 
+## Feature Engineering
+X = heart_pd.drop('heart_disease', axis=1).copy()
+y = heart_pd['heart_disease'].copy()
+X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.2, random_state=1)
 
+num_cols = ["age", "systolic", "cholesterol", "max_heart_rate", "ST_depression"]
+cat_cols = [c for c in X.columns if c not in num_cols]
+preprocessor = ColumnTransformer([
+    ('cat', OneHotEncoder(), cat_cols),
+    ('num', StandardScaler(), num_cols)
+])
+
+## Train model
+print("\\n=== Training ===")
+models = {
+    'Logistic Regression': LogisticRegression(),
+    'Random Forest': RandomForestClassifier(),
+    'KNN': KNeighborsClassifier()
+}
+
+results = []
+for name, model in models.items():
+    pipeline = Pipeline([
+        ('preprocessor', preprocessor),
+        ('classifier', model)
+    ])
+    pipeline.fit(X_train, y_train)
+    y_pred = pipeline.predict(X_test)
+    y_probs = pipeline.predict_proba(X_test)[:, 1]
+
+    results.append({
+        'Model': name,
+        'Accuracy': accuracy_score(y_test, y_pred),
+        'Precision': precision_score(y_test, y_pred),
+        'Recall': recall_score(y_test, y_pred),
+        'F1-score': f1_score(y_test, y_pred),
+        'ROC_AUC': roc_auc_score(y_test, y_probs)
+    })
     
+results_df = pd.DataFrame(results)
+print("\\n=== Comparison of Models ===")
+print(results_df)
+
+## Hyperparameter Tuning
+pipeline = Pipeline([
+    ('preprocessor', preprocessor),
+    ('logisticregression', LogisticRegression())
+])
+
+param_grid = {
+    'logisticregression__solver': ['liblinear', 'saga'],
+    'logisticregression__penalty': ['l1', 'l2'],
+    'logisticregression__tol': [1e-6, 1e-5, 1e-4, 1e-3],
+    'logisticregression__C': [1e-6, 1e-5, 1e-4, 1e-3, 1e-2],
+    'logisticregression__class_weight': [None, 'balanced'],
+    'logisticregression__max_iter': [12000, 15000, 18000]
+}
+
+cv = StratifiedKFold(shuffle=True, random_state=1)
+
+print("\\n=== Hyperparameter Tuning ===")
+grid_search = GridSearchCV(
+    estimator=pipeline,
+    param_grid=param_grid,
+    scoring='roc_auc',
+    cv=cv,
+    n_jobs=-1,
+    verbose=1
+)
+
+start_time = time.time()
+grid_search.fit(X_train, y_train)
+end_time = time.time()
+execution_time = (end_time - start_time) / 60
+
+print(f'The best estimator is: {grid_search.best_estimator_}\n'
+      f'The best params are: {grid_search.best_params_}\n'
+      f'The best ROC_AUC score is: {grid_search.best_score_}\n'
+      f'Execution time: {execution_time:.3f} minutes')
+
+y_pred = grid_search.predict(X_test)
+y_probs = grid_search.predict_proba(X_test)[:, 1]
+
+print("\\n=== Best estimator confusion matrix ===")
+print(confusion_matrix(y_test, y_pred))
+
+print("\\n=== Best estimator important feature ===")
+coefficients = grid_search.best_estimator_.named_steps.logisticregression.coef_[0]
+important_model = pd.Series(
+    coefficients[:len(X.columns)],
+    index=X.columns[:len(coefficients[:len(X.columns)])]
+).sort_values()
+
+important_df = important_model.reset_index()
+important_df.columns = ['Feature', 'Coefficient']
+print(important_df)
+    
+spark.stop()
