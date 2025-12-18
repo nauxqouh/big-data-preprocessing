@@ -10,6 +10,7 @@ big-data-preprocessing/
 ├── lesson2/   # Setting up Mini Hadoop and Sqoop System using Docker Alpine
 ├── lesson3/   # Advanced Import Techniques in Sqoop
 ├── lesson4/   # Installing Spark and Processing CSV & SQL Data with PySpark
+├── lesson5/   # Advanced Spark Analytics in Docker environment
 └── ...
 ```
 
