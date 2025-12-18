@@ -38,7 +38,7 @@ docker exec -it spark-master /opt/spark/bin/spark-submit \
   /opt/spark-apps/word_count.py
 ```
 
-```bash
+```text
 +------------+-----+
 |word        |count|
 +------------+-----+
@@ -86,8 +86,7 @@ docker exec -it spark-master /opt/spark/bin/spark-submit \
   /opt/spark-apps/parallel_processing.py
 ```
 
-```bash
-
+```text
 \nProcessed 100 partitions in 63.15 seconds
 
 +---------+-------------------+---------+
@@ -129,7 +128,7 @@ ls -la spark-data/output/
 cat spark-data/output/product_sales/part-*.csv
 ```
 
-```bash
+```text
 product,total_quantity,total_revenue
 Laptop,8,7999.92
 Monitor,10,3999.9
@@ -138,7 +137,7 @@ Chair,8,1199.92
 Keyboard,15,1199
 ```
 
-```bash
+```text
 category,transactions,total_items,total_revenue,avg_transaction_value
 Electronics,5,53,13799.47,2759.89
 Furniture,3,16,3599.84,1199.95

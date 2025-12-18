@@ -251,10 +251,28 @@ After tuning, the Logistic Regression model highlights the most influential fact
 
 ## How to Run
 
-Submit a test application:
+### 1. Build the Docker image
+
+```bash
+docker build -f spark-ml.Dockerfile -t spark-ml .
+```
+
+### 2. Start the Spark cluster using Docker Compose
+
+```bash
+docker compose up -d
+```
+
+### 3. Submit a test application:
 
 ```bash
 docker exec -it spark-master /opt/spark/bin/spark-submit \
   --master spark://spark-master:7077 \
   /opt/spark-apps/heart_disease_analysis.py
+```
+
+### 4. Stop
+
+```bash
+docker compose down
 ```
