@@ -3,8 +3,9 @@ from pyspark.sql.functions import col, sum as _sum, count, avg, round as _round,
     stddev, percentile_approx, \
     date_format, datediff,  \
     countDistinct, concat_ws, \
-    row_number
+    row_number, broadcast
 from pyspark.sql.window import Window
+import time
 
 # Database connection properties
 db_properties = {
@@ -80,11 +81,11 @@ clv_summary = df_payment \
         # Total Revenue (CLV)
         _sum("amount").alias("clv"),
         # Total Transactions
-        count("payment_id").alias("total_transactions"),
+        count("payment_id").alias("total_trans"),
         # Number of active months
-        countDistinct(date_format(col("payment_date"), "yyyy-MM")).alias("total_active_months"),
+        countDistinct(date_format(col("payment_date"), "yyyy-MM")).alias("active_months"),
         # Average revenue of each transaction value
-        _round(avg("amount"), 2).alias("avg_transaction_value"),
+        _round(avg("amount"), 2).alias("avg_trans_value"),
         # Tenure days
         datediff(_max("payment_date"), _min("payment_date")).alias("tenure_days"),
         # _max("payment_date").alias("last_purchase_date"),
@@ -92,7 +93,7 @@ clv_summary = df_payment \
     ) \
     .withColumn(
         "avg_monthly_revenue",
-        _round(col("clv")/col("total_active_months"), 2)
+        _round(col("clv")/col("active_months"), 2)
     ) \
     .orderBy(col("clv").desc())
 
@@ -134,8 +135,6 @@ customer_pareto = clv_summary \
     .withColumn("pct_revenue", col("cumulative_revenue") / total_revenue * 100) \
     .withColumn("pct_customer", col("row_num") / total_customers * 100)
 
-customer_pareto.show(100, truncate=False)
-
 # PART 1 — Top 1% customers generate how much revenue?
 top1pct_cutoff = int(total_customers * 0.01)
 
@@ -146,20 +145,82 @@ top1pct_customer_revenue = customer_pareto \
 
 top1pct_customer = customer_pareto \
     .filter(col("row_num") <= top1pct_cutoff) \
-    .select("customer_id", "customer_name", "clv", "total_transactions", "pct_revenue")
+    .select("customer_id", "customer_name", "clv", "total_trans", "pct_revenue")
 
 # PART 2 — How many customers are needed to reach 80% revenue?
 pct_customer_gen_80pct_revenue = customer_pareto \
     .filter(col("pct_revenue") >= 80) \
-    .agg(_max("pct_customer").alias("pct_customer_gen_80pct_revenue")) \
+    .agg(_min("pct_customer").alias("pct_customer_gen_80pct_revenue")) \
     .collect()[0]["pct_customer_gen_80pct_revenue"]
 
 
 # Summary Result
 print(f"Total Revenue: ${total_revenue}")
 print(f"Total Customers: {total_customers} customers")
-print(f"\n1. Top 1% customers generate approximately {top1pct_customer_revenue}% of total revenue.")
+print(f"1. Top 1% customers generate approximately {top1pct_customer_revenue}% of total revenue.")
 print("\\n== Top 1% Customers:")
 top1pct_customer.show(20, truncate=False)
-print(f"\n2. To generate 80% of revenue, approximately {pct_customer_gen_80pct_revenue}% of customers are required.")
+print(f"2. To generate 80% of revenue, approximately {pct_customer_gen_80pct_revenue}% of customers are required.")
 
+
+
+
+
+print(f"\\n=== Exercise 5. Join Optimization Analysis")
+print("\\n TABLE SIZE ANALYSIS:")
+table_counts = {
+    "payment": df_payment.count(),
+    "rental": df_rental.count(),
+    "inventory": df_inventory.count(),
+    "film": df_film.count(),
+    "film_category": df_film_category.count(),
+    "category": df_category.count()
+}
+
+for table, count in table_counts.items():
+    print(f"   {table:15s}: {count:,} rows")
+    
+print(f"\\n=== 1. Join Order Optimization ===")
+start_bad = time.time()
+result_bad = df_payment \
+    .join(df_rental, "rental_id") \
+    .join(df_inventory, "inventory_id") \
+    .join(df_film, "film_id") \
+    .join(df_film_category, "film_id") \
+    .join(df_category, "category_id") \
+    .select("payment_id", "amount", col("name").alias("category_name"))
+count_bad = result_bad.count()
+time_bad = time.time() - start_bad
+
+# Good join order (optimized)
+start_good = time.time()
+result_good = df_category \
+    .join(df_film_category, "category_id") \
+    .join(df_film, "film_id") \
+    .join(df_inventory, "film_id") \
+    .join(df_rental, "inventory_id") \
+    .join(df_payment, "rental_id") \
+    .select("payment_id", "amount", col("name").alias("category_name"))
+count_good = result_good.count()
+time_good = time.time() - start_good
+
+print(f"""Original Join Order: {time_bad:.2f} seconds ({count_bad:,} rows)
+Optimized Join Order: {time_good:.2f} seconds ({count_good:,} rows)
+Improvement: {((time_bad - time_good) / time_bad * 100):.1f}% faster.""")
+
+start_broadcast = time.time()
+ref_inventory_dim = df_category \
+    .join(df_film_category, "category_id") \
+    .join(df_film, "film_id") \
+    .join(df_inventory, "film_id")
+result_broadcast = df_payment \
+    .join(df_rental, "rental_id") \
+    .join(broadcast(ref_inventory_dim), "inventory_id") \
+    .select("payment_id", "amount", col("name").alias("category_name"))
+count_broadcast = result_broadcast.count()
+time_broadcast = time.time() - start_broadcast
+
+print(f"""Without Broadcast: {time_bad:.2f} seconds
+With Broadcast: {time_broadcast:.2f} seconds
+Improvement: {((time_bad - time_broadcast) / time_bad * 100):.1f}% faster
+""")
